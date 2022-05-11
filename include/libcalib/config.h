@@ -16,7 +16,7 @@ namespace calib {
 
 typedef struct DetectParams {
   cbdetect::Params detect_params;
-  bool show_cornres = false;
+  bool show_cornres = true;
 } DetectParams;
 
 typedef struct Params {
@@ -28,7 +28,7 @@ typedef struct Params {
 
   Params()
       : pattern_size(24)
-      , num_boards(1)
+      , num_boards(3)
       , pattern_type(0){};
 } Params;
 

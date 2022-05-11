@@ -19,7 +19,7 @@
 
 #include "libcalib/calibration.h"
 #include "libcalib/ceres_type.h"
-
+#include <iostream>
 namespace calib {
 
 void init_camera_params(const std::vector<std::vector<cv::Point2d>>& world_points,
@@ -28,12 +28,15 @@ void init_camera_params(const std::vector<std::vector<cv::Point2d>>& world_point
                         std::vector<double>& D,
                         std::vector<std::vector<double>>& Rwc,
                         std::vector<std::vector<double>>& Twc) {
+  //*WTC:number of checkboards
   int num_images = world_points.size();
+  //*WTC:sum number of Corners in each checkboard
   int num_points = 0;
   for(int i = 0; i < num_images; ++i) {
     num_points += world_points[i].size();
   }
 
+  //*WTC:张正友标定法
   std::vector<cv::Mat> homo_vec;
   Eigen::MatrixXd mat_v = Eigen::MatrixXd::Zero(2 * num_images, 6);
   for(int i = 0; i < num_images; ++i) {
@@ -140,7 +143,7 @@ double optimize_params(const std::vector<std::vector<cv::Point2d>>& world_points
 
   ceres::Solver::Options options;
   options.linear_solver_type           = ceres::DENSE_QR;
-  options.minimizer_progress_to_stdout = false;
+  options.minimizer_progress_to_stdout = true;
   ceres::Solver::Summary summary;
   ceres::Solve(options, &problem, &summary);
 
@@ -159,7 +162,7 @@ double optimize_params(const std::vector<std::vector<cv::Point2d>>& world_points
   return err;
 }
 
-double calibrate_camera(const std::vector<std::vector<cv::Point2d>>& world_points,
+double  calibrate_camera(const std::vector<std::vector<cv::Point2d>>& world_points,
                         const std::vector<std::vector<cv::Point2d>>& image_points,
                         std::vector<double>& K,
                         std::vector<double>& D,

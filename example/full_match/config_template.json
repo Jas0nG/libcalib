@@ -10,7 +10,7 @@
     "init_loc_thr": 0.01,
     "polynomial_fit_half_kernel_size": 4,
     "score_thr": 0.01,
-    "show_cornres": false
+    "show_cornres": true
   },
   "camera2": {
     "detect_method": 2,

@@ -1,0 +1,42 @@
+[
+{
+  "directory": "/home/wtc/Project/libcalib/build/sample",
+  "command": "g++  -DGFLAGS_IS_A_DLL=0 -I/home/wtc/Project/libcalib/include -isystem /usr/local/include/opencv4 -isystem /usr/local/include -isystem /usr/local/include/eigen3  -std=c++14 -w -msse4.1 -fopenmp -g -fPIE   -std=gnu++1z -o CMakeFiles/calibrate_stereo_camera.dir/calibrate_stereo_camera.cc.o -c /home/wtc/Project/libcalib/sample/calibrate_stereo_camera.cc",
+  "file": "/home/wtc/Project/libcalib/sample/calibrate_stereo_camera.cc"
+},
+{
+  "directory": "/home/wtc/Project/libcalib/build/sample",
+  "command": "g++  -DGFLAGS_IS_A_DLL=0 -I/home/wtc/Project/libcalib/include -isystem /usr/local/include/opencv4 -isystem /usr/local/include -isystem /usr/local/include/eigen3  -std=c++14 -w -msse4.1 -fopenmp -g -fPIE   -std=gnu++1z -o CMakeFiles/calibrate_single_camera.dir/calibrate_single_camera.cc.o -c /home/wtc/Project/libcalib/sample/calibrate_single_camera.cc",
+  "file": "/home/wtc/Project/libcalib/sample/calibrate_single_camera.cc"
+},
+{
+  "directory": "/home/wtc/Project/libcalib/build/src",
+  "command": "g++  -DCALIB_DLL_EXPORT -DGFLAGS_IS_A_DLL=0 -Dcalib_EXPORTS -I/home/wtc/Project/libcalib/include -isystem /usr/local/include/eigen3 -isystem /usr/local/include/opencv4 -isystem /usr/local/include  -std=c++14 -w -msse4.1 -fopenmp -g -fPIC   -std=gnu++1z -o CMakeFiles/calib.dir/calibration.cc.o -c /home/wtc/Project/libcalib/src/calibration.cc",
+  "file": "/home/wtc/Project/libcalib/src/calibration.cc"
+},
+{
+  "directory": "/home/wtc/Project/libcalib/build/src",
+  "command": "g++  -DCALIB_DLL_EXPORT -DGFLAGS_IS_A_DLL=0 -Dcalib_EXPORTS -I/home/wtc/Project/libcalib/include -isystem /usr/local/include/eigen3 -isystem /usr/local/include/opencv4 -isystem /usr/local/include  -std=c++14 -w -msse4.1 -fopenmp -g -fPIC   -std=gnu++1z -o CMakeFiles/calib.dir/ceres_type.cc.o -c /home/wtc/Project/libcalib/src/ceres_type.cc",
+  "file": "/home/wtc/Project/libcalib/src/ceres_type.cc"
+},
+{
+  "directory": "/home/wtc/Project/libcalib/build/src",
+  "command": "g++  -DCALIB_DLL_EXPORT -DGFLAGS_IS_A_DLL=0 -Dcalib_EXPORTS -I/home/wtc/Project/libcalib/include -isystem /usr/local/include/eigen3 -isystem /usr/local/include/opencv4 -isystem /usr/local/include  -std=c++14 -w -msse4.1 -fopenmp -g -fPIC   -std=gnu++1z -o CMakeFiles/calib.dir/config.cc.o -c /home/wtc/Project/libcalib/src/config.cc",
+  "file": "/home/wtc/Project/libcalib/src/config.cc"
+},
+{
+  "directory": "/home/wtc/Project/libcalib/build/src",
+  "command": "g++  -DCALIB_DLL_EXPORT -DGFLAGS_IS_A_DLL=0 -Dcalib_EXPORTS -I/home/wtc/Project/libcalib/include -isystem /usr/local/include/eigen3 -isystem /usr/local/include/opencv4 -isystem /usr/local/include  -std=c++14 -w -msse4.1 -fopenmp -g -fPIC   -std=gnu++1z -o CMakeFiles/calib.dir/extract.cc.o -c /home/wtc/Project/libcalib/src/extract.cc",
+  "file": "/home/wtc/Project/libcalib/src/extract.cc"
+},
+{
+  "directory": "/home/wtc/Project/libcalib/build/src",
+  "command": "g++  -DCALIB_DLL_EXPORT -DGFLAGS_IS_A_DLL=0 -Dcalib_EXPORTS -I/home/wtc/Project/libcalib/include -isystem /usr/local/include/eigen3 -isystem /usr/local/include/opencv4 -isystem /usr/local/include  -std=c++14 -w -msse4.1 -fopenmp -g -fPIC   -std=gnu++1z -o CMakeFiles/calib.dir/fileio.cc.o -c /home/wtc/Project/libcalib/src/fileio.cc",
+  "file": "/home/wtc/Project/libcalib/src/fileio.cc"
+},
+{
+  "directory": "/home/wtc/Project/libcalib/build/src",
+  "command": "g++  -DCALIB_DLL_EXPORT -DGFLAGS_IS_A_DLL=0 -Dcalib_EXPORTS -I/home/wtc/Project/libcalib/include -isystem /usr/local/include/eigen3 -isystem /usr/local/include/opencv4 -isystem /usr/local/include  -std=c++14 -w -msse4.1 -fopenmp -g -fPIC   -std=gnu++1z -o CMakeFiles/calib.dir/interface.cc.o -c /home/wtc/Project/libcalib/src/interface.cc",
+  "file": "/home/wtc/Project/libcalib/src/interface.cc"
+}
+]

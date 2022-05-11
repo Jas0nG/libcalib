@@ -16,15 +16,17 @@ int main() {
 
   std::vector<cv::Mat> images;
   std::vector<std::string> files;
-  get_all_file("../example/full_match/left", ".*png", files);
+  get_all_file("../example/full_match/new", ".*jpeg", files);
+  //get_all_file("../example/full_match/left", ".*png", files);
   for(int i = 0; i < files.size(); ++i) {
     cv::Mat image = cv::imread(files[i].c_str(), cv::IMREAD_GRAYSCALE);
+    cv::resize(image,image,cv::Size(960,720));
     images.emplace_back(image);
   }
 
   auto t1 = high_resolution_clock::now();
   double err;
-  calib::calibrate(images, "../example/full_match/config_template.json", K, D, Rwc, Twc, extract_res, err);
+  calib::calibrate(images, "../example/full_match/new/config_template.json", K, D, Rwc, Twc, extract_res, err);
   auto t2 = high_resolution_clock::now();
   printf("Took: %.3f ms\n", duration_cast<microseconds>(t2 - t1).count() / 1000.0);
 
