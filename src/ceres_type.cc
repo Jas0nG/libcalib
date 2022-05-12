@@ -99,9 +99,18 @@ bool ProjectCostFunction::Evaluate(double const* const* parameters,
   double yp2 = yp * yp;
   double xyp = xp * yp;
   double r2  = xp2 + yp2;
-
-  double txp = (1 + r2 * (k1 + r2 * (k2 + r2 * k3))) * xp + 2. * p1 * xyp + p2 * (r2 + 2. * xp2);
-  double typ = (1 + r2 * (k1 + r2 * (k2 + r2 * k3))) * yp + p1 * (r2 + 2. * yp2) + 2. * p2 * xyp;
+  double theta = cv::fastAtan2(r2,1);
+  double theta2 = theta * theta;
+  double theta4 = theta2 * theta2;
+  double theta6 = theta2 * theta4;
+  double theta8 = theta4 * theta4;
+  double k4 = 0;
+  double rd = theta * (1 + k1 * theta2 + k2 * theta4 + k3 * theta2 *theta4 + k4 * theta4 * theta4);
+  double txp = rd / sqrt(r2) * xp + 2. * p1 * xyp + p2 * (r2 + 2. * xp2);
+  double typ = rd / sqrt(r2) * yp + p1 * (r2 + 2. * yp2) + 2. * p2 * xyp;
+  //(1 + (x^2+y^2)(a + (x^2+y^2)(b + (x^2+y^2)c)))x + 2dxy + e((x^2+y^2) + 2x^2)
+  //double txp = (1 + r2 * (k1 + r2 * (k2 + r2 * k3))) * xp + 2. * p1 * xyp + p2 * (r2 + 2. * xp2);
+  //double typ = (1 + r2 * (k1 + r2 * (k2 + r2 * k3))) * yp + p1 * (r2 + 2. * yp2) + 2. * p2 * xyp;
   double i   = fx * txp + cx;
   double j   = fy * typ + cy;
 
@@ -110,36 +119,70 @@ bool ProjectCostFunction::Evaluate(double const* const* parameters,
 
   if(jacobians == NULL) return true;
 
-  // jacobians
+// jacobians
   double di_dtxp = fx; // di / dtxp
   double dj_dtyp = fy; // dj / dtyp
-
+  double dtxp_dk1 = xp / sqrt(r2) * theta2 * theta; // dtxp / dk1
+  double dtxp_dk2 = xp / sqrt(r2) * theta4 * theta; // dtxp / dk2
+  double dtxp_dk3 = xp / sqrt(r2) * theta4 * theta2 * theta; // dtxp / dk3
+  double dtxp_dk4 = xp / sqrt(r2) * theta4 * theta4 * theta; // dtxp / dk4
+  double dtyp_dk1 = yp / sqrt(r2) * theta2 * theta; // dtyp / dk1
+  double dtyp_dk2 = yp / sqrt(r2) * theta4 * theta; // dtyp / dk2
+  double dtyp_dk3 = yp / sqrt(r2) * theta4 * theta2 * theta; // dtyp / dk3
+  double dtyp_dk4 = yp / sqrt(r2) * theta4 * theta4 * theta; // dtyp / dk4
+  // lxd : 这里直接把jacobian由1 × 18 改为了 1 × 20, 很有可能出问题
   if(jacobians[0] != NULL) {
     jacobians[0][0]  = txp;                         // di / dfx
     jacobians[0][1]  = 0.;                          // di / dfy
     jacobians[0][2]  = 1.;                          // di / dcx
     jacobians[0][3]  = 0.;                          // di / dcy
-    jacobians[0][4]  = di_dtxp * xp * r2;           // di / dk1
-    jacobians[0][5]  = di_dtxp * xp * r2 * r2;      // di / dk2
+    jacobians[0][4]  = di_dtxp * dtxp_dk1;          // di / dk1
+    jacobians[0][5]  = di_dtxp * dtxp_dk2;          // di / dk2
     jacobians[0][6]  = di_dtxp * 2. * xyp;          // di / dp1
     jacobians[0][7]  = di_dtxp * (r2 + 2. * xp2);   // di / dp2
-    jacobians[0][8]  = di_dtxp * xp * r2 * r2 * r2; // di / dk3
-    jacobians[0][9]  = 0.;                          // dj / dfx
-    jacobians[0][10] = typ;                         // dj / dfy
-    jacobians[0][11] = 0.;                          // dj / dcx
-    jacobians[0][12] = 1.;                          // dj / dcy
-    jacobians[0][13] = dj_dtyp * yp * r2;           // dj / dk1
-    jacobians[0][14] = dj_dtyp * yp * r2 * r2;      // dj / dk2
-    jacobians[0][15] = dj_dtyp * (r2 + 2. * yp2);   // dj / dp1
-    jacobians[0][16] = dj_dtyp * 2. * xyp;          // dj / dp2
-    jacobians[0][17] = dj_dtyp * yp * r2 * r2 * r2; // dj / dk3
-
-    if(!with_k3_) {
-      jacobians[0][8]  = 0.; // di / dk3
-      jacobians[0][17] = 0.; // dj / dk3
-    }
+    jacobians[0][8]  = di_dtxp * dtxp_dk3;          // di / dk3
+    jacobians[0][9]  = di_dtxp * dtxp_dk4;          // di / dk4
+    jacobians[0][10]  = 0.;                         // dj / dfx
+    jacobians[0][11]  = typ;                          // dj / dfy
+    jacobians[0][12]  = 0.;                          // dj / dcx
+    jacobians[0][13]  = 1.;                          // dj / dcy
+    jacobians[0][14]  = dj_dtyp * dtyp_dk1;          // dj / dk1
+    jacobians[0][15]  = dj_dtyp * dtyp_dk2;          // dj / dk2
+    jacobians[0][16]  = dj_dtyp * (r2 + 2. * yp2);   // dj / dp1
+    jacobians[0][17]  = dj_dtyp * 2. * xyp;          // dj / dp2
+    jacobians[0][18]  = dj_dtyp * dtyp_dk3;          // dj / dk3
+    jacobians[0][19]  = dj_dtyp * dtyp_dk3;          // dj / dk4
   }
+  // if(jacobians[0] != NULL) {
+  //   jacobians[0][0]  = txp;                         // di / dfx
+  //   jacobians[0][1]  = 0.;                          // di / dfy
+  //   jacobians[0][2]  = 1.;                          // di / dcx
+  //   jacobians[0][3]  = 0.;                          // di / dcy
+  //   jacobians[0][4]  = di_dtxp * xp * r2;           // di / dk1
+  //   jacobians[0][5]  = di_dtxp * xp * r2 * r2;      // di / dk2
+  //   jacobians[0][6]  = di_dtxp * 2. * xyp;          // di / dp1
+  //   jacobians[0][7]  = di_dtxp * (r2 + 2. * xp2);   // di / dp2
+  //   jacobians[0][8]  = di_dtxp * xp * r2 * r2 * r2; // di / dk3
+  //   jacobians[0][9]  = 0.;                          // dj / dfx
+  //   jacobians[0][10] = typ;                         // dj / dfy
+  //   jacobians[0][11] = 0.;                          // dj / dcx
+  //   jacobians[0][12] = 1.;                          // dj / dcy
+  //   jacobians[0][13] = dj_dtyp * yp * r2;           // dj / dk1
+  //   jacobians[0][14] = dj_dtyp * yp * r2 * r2;      // dj / dk2
+  //   jacobians[0][15] = dj_dtyp * (r2 + 2. * yp2);   // dj / dp1
+  //   jacobians[0][16] = dj_dtyp * 2. * xyp;          // dj / dp2
+  //   jacobians[0][17] = dj_dtyp * yp * r2 * r2 * r2; // dj / dk3
 
+  //   if(!with_k3_) {
+  //     jacobians[0][8]  = 0.; // di / dk3
+  //     jacobians[0][17] = 0.; // dj / dk3
+  //   }
+  // }
+  // double dtxp_dxp =(( xp2 * (p1 *theta8 + k3 * theta6 +k2*theta4+k1*theta2+1.) + xp *theta *(8.*p1*xp *theta6*theta+6. * k3 *xp *theta4*theta+ 4. *k2*xp *theta2*theta + 2. * k1 *xp *theta)+(6. * p2 *xp +2. * p1*yp)*r2*(r2+1))/(r2*(r2+1))) +
+  //           (theta * (p1*theta8 + k3 * theta6 +k2*theta4 +k1*theta2 +1)/sqrt(r2)) -
+  //           xp2 * theta * (p1 * theta8 + k3 * theta6 + k2*theta4 +k1*theta2 + 1.)/pow(r2,3/2);
+  // double dtyp_dyp = (yp * xp *(p1 * theta8 + k3 * theta6 +k2*theta4 +k1*theta2 +1.)+ yp* theta * (8.*p1*xp*theta6*theta+6. * k3 * xp * theta4*theta+ 4.*k2*xp * theta2*theta + 2. * k1*xp* theta)+(2.*p1*xp + 2. * p2 * yp)*(r2)*(r2+1))/(r2*(r2+1)) -
+  //           (yp * xp *(p1 * theta8 + k3 * theta6 +k2*theta4 +k1*theta2 +1.))/pow(r2,3/2);
   double dtxp_dxp = 1 + k1 * (r2 + 2. * xp2) + k2 * r2 * (r2 + 4. * xp2) + 2. * p1 * yp + 6. * p2 * xp + k3 * r2 * r2 * (r2 + 6. * xp2);
   double dtyp_dyp = 1 + k1 * (r2 + 2. * yp2) + k2 * r2 * (r2 + 4. * yp2) + 6. * p1 * yp + 2. * p2 * xp + k3 * r2 * r2 * (r2 + 6. * yp2);
   double di_dxp   = di_dtxp * dtxp_dxp;
